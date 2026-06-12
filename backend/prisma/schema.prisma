@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Trick {
+  id              String   @id @default(uuid())
+  name            String
+  difficulty      String
+  category        String
+  rotationDegrees Int?
+  flipDirection   String?
+  stance          String?
+  height          Float?
+  manualType      String?
+  distance        Float?
+  grindType       String?
+  obstacleType    String?
+  grabType        String?
+  airTime         Float?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  executions      TrickExecution[]
+
+  @@index([category])
+  @@index([difficulty])
+}
+
+model TrickExecution {
+  id        String   @id @default(uuid())
+  trickId   String
+  success   Boolean
+  message   String
+  metadata  String?
+  timestamp DateTime @default(now())
+  trick     Trick    @relation(fields: [trickId], references: [id], onDelete: Cascade)
+
+  @@index([trickId])
+  @@index([timestamp])
+}
